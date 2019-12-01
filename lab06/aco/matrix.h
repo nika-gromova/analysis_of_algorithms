@@ -5,6 +5,13 @@
 
 #define MIN_DISTANCE 1
 #define MAX_DISTANCE 10
+
+#define TEST_SIZE 10
+
+#define EQ_EPS 1e-90
+#define	is_zero(x)	(((x) > -EQ_EPS && (x) < EQ_EPS))
+
+
 using namespace std;
 template<typename Type>
 class Matrix
@@ -99,6 +106,17 @@ public:
         }
     }
 
+    void fill_array(Type array[TEST_SIZE][TEST_SIZE])
+    {
+        for (auto i = 0; i < TEST_SIZE; i++)
+        {
+            for (auto j = 0; j < TEST_SIZE; j++)
+            {
+                mtr[i][j] = array[i][j];
+            }
+        }
+    }
+
     double compute_avg(void) const
     {
         double sum = 0.0;
@@ -112,6 +130,18 @@ public:
             }
         }
         return sum / num;
+    }
+
+    void check_zero(Type tmin)
+    {
+        for (auto i = 0; i < n; i++)
+        {
+            for (auto j = 0; j < n; j++)
+            {
+                if (is_zero(mtr[i][j]))
+                    mtr[i][j] = tmin;
+            }
+        }
     }
 
     Matrix &operator= (Matrix<Type> &mtr2)

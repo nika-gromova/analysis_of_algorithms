@@ -2,16 +2,19 @@
 #include <vector>
 #include <cstdlib>
 #include <fstream>
-#include <chrono>
 #include <algorithm>
 #include <math.h>
+#include <string>
+#include <iomanip>
+#include <chrono>
 
 #include "matrix.h"
 #include "test.h"
 
-#define ALPHA_BETTA_CONST 3
+#define ALPHA_BETTA_CONST 1
 
 const double teta_start = 10;
+const double tmin = 5;
 
 using namespace std;
 
@@ -141,19 +144,84 @@ pair<int, vector<int>> aco(const Matrix<int> &distances, const int &t_max, const
         // updating pheromone on all edges during night
         teta *= (1.0 - ro);
         teta += delta_teta;
+        teta.check_zero(tmin);
     }
     return pair<int, vector<int>>(min_path_length, min_path);
 }
 
+void write_res(double &ro, double &alpha, int &tmax, double &dis, const string &name)
+{
+    ofstream file;
+    file.open(name, ios_base::app);
+    if (!file)
+        cout << "error" << endl;
+    else
+    {
+        file << ro << "," << alpha << "," << tmax << "," << dis << '\n';
+        file.close();
+    }
+}
+
+void write_time(int &n, double &time_brute, double &time_aco, const string &name)
+{
+    ofstream file;
+    file.open(name, ios_base::app);
+    if (!file)
+        cout << "error" << endl;
+    else
+    {
+        file << n << "," << fixed << setprecision(8) << time_brute << "," << time_aco << '\n';
+        file.close();
+    }
+}
 
 int main(void)
 {
     srand(time(0));
     system("chcp 65001");
+
+    // parameterization
+    /*
+    int test_array[10][10] = { { 0, 8, 7, 1, 5, 5, 4, 9, 4, 3 },
+                               { 8, 0, 8, 7, 8, 5, 9, 4, 2, 2 },
+                               { 7, 8, 0, 7, 7, 4, 6, 9, 2, 9 },
+                               { 1, 7, 7, 0, 2, 1, 2, 2, 10, 5 },
+                               { 5, 8, 7, 2, 0, 9, 1, 8, 3, 2 },
+                               { 5, 5, 4, 1, 9, 0, 9, 4, 1, 6 },
+                               { 4, 9, 6, 2, 1, 9, 0, 3, 3, 1 },
+                               { 9, 4, 9, 2, 8, 4, 3, 0, 6, 8 },
+                               { 4, 2, 2, 10, 3, 1, 3, 6, 0, 7 },
+                               { 3, 2, 9, 5, 2, 6, 1, 8, 7, 0 } };
+    Matrix<int> mtr1(10);
+    mtr1.fill_array(test_array);
+    mtr1.print();
+    pair<int, vector<int>> brute_results = brute_force(mtr1);
+    int ideal_len = brute_results.first;
+    double dis;
+    for (double ro = 0; ro <= 1; ro += 0.25)
+    {
+        for (double alpha = 0; alpha <= 1; alpha += 0.25)
+        {
+            for (int t = 10; t <= 310; t += 10)
+            {
+                for (auto i = 0; i < 100; i++)
+                {
+                    pair<int, vector<int>> results = aco(mtr1, t, alpha, ro);
+                    dis += abs(results.first - ideal_len);
+                }
+                dis /= 100.0;
+                write_res(ro, alpha, t, dis, "param2.txt");
+            }
+        }
+    }
+    */
+
+    // examples of work
+    /*
     Matrix<int> mtr1(10);
     mtr1.fill_int_random();
     mtr1.print();
-    pair<int, vector<int>> results = aco(mtr1, 10, 2, 0.5);
+    pair<int, vector<int>> results = aco(mtr1, 100, 0.5, 0.3);
     cout << "aco results: " << results.first << " length" << endl;
     for (auto ptr = results.second.begin(); ptr != results.second.end(); ptr++)
         cout << *ptr << " ";
@@ -164,8 +232,30 @@ int main(void)
     for (auto ptr = brute_results.second.begin(); ptr != brute_results.second.end(); ptr++)
         cout << *ptr << " ";
     cout << endl;
+    */
 
 
+    // comparison brute_force and aco
+    /*
+    double t1, t2;
+    for (int n = 2; n <= 20; n++)
+    {
+        Matrix<int> mtr1(n);
+        mtr1.fill_int_random();
+        auto start = chrono::high_resolution_clock::now();
+        for (auto i = 0; i < 10; i++)
+            brute_force(mtr1);
+        auto end = chrono::high_resolution_clock::now();
+        t1 = chrono::duration_cast<chrono::duration<double>>(end - start).count() / 10.0;
+
+        start = chrono::high_resolution_clock::now();
+        for (auto i = 0; i < 10; i++)
+            aco(mtr1, 290, 0.5, 0.5);
+        end = chrono::high_resolution_clock::now();
+        t2 = chrono::duration_cast<chrono::duration<double>>(end - start).count() / 10.0;
+        write_time(n, t1, t2, "time.txt");
+    }
+    */
 
     return 0;
 }
