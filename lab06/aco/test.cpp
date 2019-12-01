@@ -23,7 +23,7 @@ pair<int, vector<int> > brute_force(const Matrix<int> &distances)
         cur_len = 0;
         hamilton(distances, min_path, min_path_len, cur_path, visited, cur_len);
     }
-    cout << "brute force method found " << s << " routes" << endl;
+    //cout << "brute force method found " << s << " routes" << endl;
     return pair<int, vector<int>>(min_path_len, min_path);
 }
 

@@ -150,7 +150,7 @@ int main(void)
 {
     srand(time(0));
     system("chcp 65001");
-    Matrix<int> mtr1(5);
+    Matrix<int> mtr1(10);
     mtr1.fill_int_random();
     mtr1.print();
     pair<int, vector<int>> results = aco(mtr1, 10, 2, 0.5);
