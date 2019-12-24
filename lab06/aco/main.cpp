@@ -218,7 +218,7 @@ int main(void)
 
     // examples of work
     /*
-    Matrix<int> mtr1(10);
+    Matrix<int> mtr1(5);
     mtr1.fill_int_random();
     mtr1.print();
     pair<int, vector<int>> results = aco(mtr1, 100, 0.5, 0.3);
@@ -233,6 +233,7 @@ int main(void)
         cout << *ptr << " ";
     cout << endl;
     */
+
 
 
     // comparison brute_force and aco
